@@ -1,17 +1,17 @@
 {
-  "name": "erstan",
+  "name": "erstan-beta",
   "owner": {
     "name": "Erstan",
     "url": "https://signup.erstan.com/"
   },
-  "description": "Official Erstan plugins for Claude Code.",
+  "description": "Temporary Erstan Beta plugin for Claude Code.",
   "plugins": [
     {
-      "name": "erstan",
-      "displayName": "Erstan",
-      "source": "./plugins/erstan",
-      "description": "Build and review Erstan Agents, operate runs, manage Skills, and work with authorized workspace content.",
-      "version": "0.1.0",
+      "name": "erstan-beta",
+      "displayName": "Erstan Beta",
+      "source": "./plugins/erstan-beta",
+      "description": "Connect beta users to the isolated Erstan QA environment.",
+      "version": "0.1.0-beta.1",
       "category": "productivity"
     }
   ]

@@ -1,15 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "erstan",
-  "displayName": "Erstan",
-  "version": "0.1.0",
-  "description": "Build and review Erstan Agents, operate runs, manage Skills, and work with authorized workspace content.",
+  "name": "erstan-beta",
+  "displayName": "Erstan Beta",
+  "version": "0.1.0-beta.1",
+  "description": "Connect beta users to the isolated Erstan QA environment.",
   "author": {
     "name": "Erstan",
     "url": "https://signup.erstan.com/"
   },
   "homepage": "https://docs.erstan.com/developers/connect-coding-agent",
-  "repository": "https://github.com/erstanai/erstan-agent-tools",
+  "repository": "https://github.com/erstanai/erstan-agent-tools-beta",
   "license": "Apache-2.0",
   "keywords": [
     "agents",

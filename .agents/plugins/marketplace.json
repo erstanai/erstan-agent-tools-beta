@@ -1,14 +1,14 @@
 {
-  "name": "erstan",
+  "name": "erstan-beta",
   "interface": {
-    "displayName": "Erstan"
+    "displayName": "Erstan Beta"
   },
   "plugins": [
     {
-      "name": "erstan",
+      "name": "erstan-beta",
       "source": {
         "source": "local",
-        "path": "./plugins/erstan"
+        "path": "./plugins/erstan-beta"
       },
       "policy": {
         "installation": "AVAILABLE",

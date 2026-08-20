@@ -1,13 +1,13 @@
 {
-  "name": "erstan",
-  "version": "0.1.0",
-  "description": "Build and review Erstan Agents, operate runs, manage Skills, and work with authorized workspace content.",
+  "name": "erstan-beta",
+  "version": "0.1.0-beta.1",
+  "description": "Connect beta users to the isolated Erstan QA environment.",
   "author": {
     "name": "Erstan",
     "url": "https://signup.erstan.com/"
   },
   "homepage": "https://docs.erstan.com/developers/connect-coding-agent",
-  "repository": "https://github.com/erstanai/erstan-agent-tools",
+  "repository": "https://github.com/erstanai/erstan-agent-tools-beta",
   "license": "Apache-2.0",
   "keywords": [
     "agents",
@@ -18,9 +18,9 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "Erstan",
-    "shortDescription": "Build agents and manage work in Erstan",
-    "longDescription": "Use Erstan's hosted MCP server to build and review Agents, operate published runs, manage reusable Skills, and work with authorized tasks, projects, documents, and files.",
+    "displayName": "Erstan Beta",
+    "shortDescription": "Use Erstan's isolated beta environment",
+    "longDescription": "Use the isolated Erstan QA environment to build and review Agents, operate published runs, manage reusable Skills, and work with authorized beta workspace content.",
     "developerName": "Erstan",
     "category": "Productivity",
     "capabilities": [

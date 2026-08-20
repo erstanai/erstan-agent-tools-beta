@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "erstan": {
-      "type": "http",
-      "url": "https://api.erstan.com/v1/mcp"
-    }
-  }
-}

@@ -5,7 +5,10 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const mcpUrl = "https://api.erstan.com/v1/mcp";
+const mcpUrl = "https://api-qa.erstan.com/v1/mcp";
+const productionMcpUrl = ["https://api", "erstan.com/v1/mcp"].join(".");
+const pluginName = "erstan-beta";
+const repositoryUrl = "https://github.com/erstanai/erstan-agent-tools-beta";
 const websiteUrl = "https://signup.erstan.com/";
 const privacyPolicyUrl = "https://signup.erstan.com/privacy/";
 const termsOfServiceUrl = "https://signup.erstan.com/terms/";
@@ -36,28 +39,28 @@ const expectedFiles = new Set([
   "SECURITY.md",
   "docs/PUBLISHING.md",
   "package.json",
-  "plugins/erstan/.claude-plugin/plugin.json",
-  "plugins/erstan/.codex-plugin/plugin.json",
-  "plugins/erstan/.mcp.json",
-  "plugins/erstan/assets/erstan-icon.svg",
-  "plugins/erstan/assets/erstan-logo.svg",
-  "plugins/erstan/skills/erstan-agent-builder/SKILL.md",
-  "plugins/erstan/skills/erstan-agent-builder/agents/openai.yaml",
-  "plugins/erstan/skills/erstan-agent-builder/references/lifecycle-and-graph.md",
-  "plugins/erstan/skills/erstan-agent-review/SKILL.md",
-  "plugins/erstan/skills/erstan-agent-review/agents/openai.yaml",
-  "plugins/erstan/skills/erstan-agent-review/references/agent-checklist.md",
-  "plugins/erstan/skills/erstan-agent-review/references/fix-boundaries.md",
-  "plugins/erstan/skills/erstan-agent-review/references/run-checklist.md",
-  "plugins/erstan/skills/erstan-run-operator/SKILL.md",
-  "plugins/erstan/skills/erstan-run-operator/agents/openai.yaml",
-  "plugins/erstan/skills/erstan-run-operator/references/run-lifecycle.md",
-  "plugins/erstan/skills/erstan-skill-manager/SKILL.md",
-  "plugins/erstan/skills/erstan-skill-manager/agents/openai.yaml",
-  "plugins/erstan/skills/erstan-skill-manager/references/package-lifecycle.md",
-  "plugins/erstan/skills/erstan-work-manager/SKILL.md",
-  "plugins/erstan/skills/erstan-work-manager/agents/openai.yaml",
-  "plugins/erstan/skills/erstan-work-manager/references/work-tools.md",
+  "plugins/erstan-beta/.claude-plugin/plugin.json",
+  "plugins/erstan-beta/.codex-plugin/plugin.json",
+  "plugins/erstan-beta/.mcp.json",
+  "plugins/erstan-beta/assets/erstan-icon.svg",
+  "plugins/erstan-beta/assets/erstan-logo.svg",
+  "plugins/erstan-beta/skills/erstan-agent-builder/SKILL.md",
+  "plugins/erstan-beta/skills/erstan-agent-builder/agents/openai.yaml",
+  "plugins/erstan-beta/skills/erstan-agent-builder/references/lifecycle-and-graph.md",
+  "plugins/erstan-beta/skills/erstan-agent-review/SKILL.md",
+  "plugins/erstan-beta/skills/erstan-agent-review/agents/openai.yaml",
+  "plugins/erstan-beta/skills/erstan-agent-review/references/agent-checklist.md",
+  "plugins/erstan-beta/skills/erstan-agent-review/references/fix-boundaries.md",
+  "plugins/erstan-beta/skills/erstan-agent-review/references/run-checklist.md",
+  "plugins/erstan-beta/skills/erstan-run-operator/SKILL.md",
+  "plugins/erstan-beta/skills/erstan-run-operator/agents/openai.yaml",
+  "plugins/erstan-beta/skills/erstan-run-operator/references/run-lifecycle.md",
+  "plugins/erstan-beta/skills/erstan-skill-manager/SKILL.md",
+  "plugins/erstan-beta/skills/erstan-skill-manager/agents/openai.yaml",
+  "plugins/erstan-beta/skills/erstan-skill-manager/references/package-lifecycle.md",
+  "plugins/erstan-beta/skills/erstan-work-manager/SKILL.md",
+  "plugins/erstan-beta/skills/erstan-work-manager/agents/openai.yaml",
+  "plugins/erstan-beta/skills/erstan-work-manager/references/work-tools.md",
   "scripts/check-release.mjs"
 ]);
 
@@ -189,13 +192,14 @@ for (const file of expectedFiles) {
 assert(!files.some((file) => file.endsWith("/.app.json") || file === ".app.json"), ".app.json requires a real registered OpenAI app ID and must not ship yet");
 
 const packageJson = await json("package.json");
-const codexManifest = await json("plugins/erstan/.codex-plugin/plugin.json");
-const claudeManifest = await json("plugins/erstan/.claude-plugin/plugin.json");
+const codexManifest = await json("plugins/erstan-beta/.codex-plugin/plugin.json");
+const claudeManifest = await json("plugins/erstan-beta/.claude-plugin/plugin.json");
 const codexMarketplace = await json(".agents/plugins/marketplace.json");
 const claudeMarketplace = await json(".claude-plugin/marketplace.json");
-const mcp = await json("plugins/erstan/.mcp.json");
+const mcp = await json("plugins/erstan-beta/.mcp.json");
 
 assert(packageJson.private === true, "package.json must remain private to prevent accidental npm publication");
+assert(packageJson.name === "erstan-agent-tools-beta", "package.json name must identify the beta distribution");
 assert(versionPattern.test(packageJson.version ?? ""), "package.json must use semantic versioning");
 if (process.env.RELEASE_TAG) {
   assert(
@@ -203,14 +207,16 @@ if (process.env.RELEASE_TAG) {
     `Release tag ${process.env.RELEASE_TAG} must exactly match package version v${packageJson.version}`,
   );
 }
-assert(codexManifest.name === "erstan", "Codex plugin name must be erstan");
-assert(claudeManifest.name === "erstan", "Claude plugin name must be erstan");
+assert(codexManifest.name === pluginName, `Codex plugin name must be ${pluginName}`);
+assert(claudeManifest.name === pluginName, `Claude plugin name must be ${pluginName}`);
 assert(codexManifest.version === packageJson.version, "Codex plugin version must match package.json");
 assert(claudeManifest.version === packageJson.version, "Claude plugin version must match package.json");
 assert(codexManifest.license === "Apache-2.0", "Codex plugin license must be Apache-2.0");
 assert(claudeManifest.license === "Apache-2.0", "Claude plugin license must be Apache-2.0");
 assert(codexManifest.mcpServers === "./.mcp.json", "Codex plugin must reference its local .mcp.json");
 assert(claudeManifest.mcpServers === "./.mcp.json", "Claude plugin must reference its local .mcp.json");
+assert(codexManifest.repository === repositoryUrl, "Codex plugin repository must point to the beta repository");
+assert(claudeManifest.repository === repositoryUrl, "Claude plugin repository must point to the beta repository");
 assert(!Object.hasOwn(codexManifest, "apps"), "Codex plugin must not declare apps before a real OpenAI app is registered");
 assert(codexManifest.author?.url === websiteUrl, "Codex plugin author URL must use the direct HTTPS Erstan site");
 assert(claudeManifest.author?.url === websiteUrl, "Claude plugin author URL must use the direct HTTPS Erstan site");
@@ -219,22 +225,22 @@ assert(codexManifest.interface?.privacyPolicyURL === privacyPolicyUrl, "Codex pl
 assert(codexManifest.interface?.termsOfServiceURL === termsOfServiceUrl, "Codex plugin terms URL must use the direct HTTPS Erstan site");
 
 const codexEntries = codexMarketplace.plugins ?? [];
-assert(codexMarketplace.name === "erstan", "Codex marketplace name must be erstan");
-assert(codexMarketplace.interface?.displayName === "Erstan", "Codex marketplace display name must be Erstan");
-assert(codexEntries.length === 1 && codexEntries[0]?.name === "erstan", "Codex marketplace must contain exactly the Erstan plugin");
-assert(codexEntries[0]?.source?.source === "local" && codexEntries[0]?.source?.path === "./plugins/erstan", "Codex marketplace source must be ./plugins/erstan");
+assert(codexMarketplace.name === pluginName, `Codex marketplace name must be ${pluginName}`);
+assert(codexMarketplace.interface?.displayName === "Erstan Beta", "Codex marketplace display name must be Erstan Beta");
+assert(codexEntries.length === 1 && codexEntries[0]?.name === pluginName, "Codex marketplace must contain exactly the Erstan Beta plugin");
+assert(codexEntries[0]?.source?.source === "local" && codexEntries[0]?.source?.path === "./plugins/erstan-beta", "Codex marketplace source must be ./plugins/erstan-beta");
 
 const claudeEntries = claudeMarketplace.plugins ?? [];
-assert(claudeMarketplace.name === "erstan", "Claude marketplace name must be erstan");
+assert(claudeMarketplace.name === pluginName, `Claude marketplace name must be ${pluginName}`);
 assert(claudeMarketplace.owner?.url === websiteUrl, "Claude marketplace owner URL must use the direct HTTPS Erstan site");
-assert(claudeEntries.length === 1 && claudeEntries[0]?.name === "erstan", "Claude marketplace must contain exactly the Erstan plugin");
-assert(claudeEntries[0]?.source === "./plugins/erstan", "Claude marketplace source must be ./plugins/erstan");
+assert(claudeEntries.length === 1 && claudeEntries[0]?.name === pluginName, "Claude marketplace must contain exactly the Erstan Beta plugin");
+assert(claudeEntries[0]?.source === "./plugins/erstan-beta", "Claude marketplace source must be ./plugins/erstan-beta");
 assert(claudeEntries[0]?.version === packageJson.version, "Claude marketplace version must match package.json");
 
 const mcpRootKeys = Object.keys(mcp).sort();
-const server = mcp.mcpServers?.erstan;
+const server = mcp.mcpServers?.[pluginName];
 assert(mcpRootKeys.join(",") === "mcpServers", ".mcp.json may contain only mcpServers at its root");
-assert(Object.keys(mcp.mcpServers ?? {}).join(",") === "erstan", ".mcp.json must define only the Erstan server");
+assert(Object.keys(mcp.mcpServers ?? {}).join(",") === pluginName, ".mcp.json must define only the Erstan Beta server");
 assert(server?.type === "http", "Erstan MCP transport type must be http");
 assert(server?.url === mcpUrl, `Erstan MCP URL must be ${mcpUrl}`);
 assert(Object.keys(server ?? {}).sort().join(",") === "type,url", "Erstan MCP config may contain only type and url; OAuth belongs to the host");
@@ -250,8 +256,8 @@ for (const prompt of Array.isArray(prompts) ? prompts : []) {
 }
 
 for (const skillName of expectedSkills) {
-  const skillPath = `plugins/erstan/skills/${skillName}/SKILL.md`;
-  const yamlPath = `plugins/erstan/skills/${skillName}/agents/openai.yaml`;
+  const skillPath = `plugins/erstan-beta/skills/${skillName}/SKILL.md`;
+  const yamlPath = `plugins/erstan-beta/skills/${skillName}/agents/openai.yaml`;
   const markdown = await text(skillPath);
   const metadata = parseSkillFrontmatter(markdown, skillPath);
   assert(metadata.name === skillName, `${skillPath} name must match its directory`);
@@ -265,12 +271,12 @@ for (const skillName of expectedSkills) {
   assert(Boolean(displayName), `${yamlPath} requires a quoted display_name`);
   assert((shortDescription?.length ?? 0) >= 25 && (shortDescription?.length ?? 0) <= 64, `${yamlPath} short_description must contain 25-64 characters`);
   assert(defaultPrompt?.includes(`$${skillName}`), `${yamlPath} default_prompt must mention $${skillName}`);
-  assert(yaml.includes('type: "mcp"') && yaml.includes('value: "erstan"'), `${yamlPath} must depend on the Erstan MCP server`);
-  assert(yaml.includes(`url: "${mcpUrl}"`), `${yamlPath} must use the production MCP URL`);
+  assert(yaml.includes('type: "mcp"') && yaml.includes(`value: "${pluginName}"`), `${yamlPath} must depend on the Erstan Beta MCP server`);
+  assert(yaml.includes(`url: "${mcpUrl}"`), `${yamlPath} must use the QA MCP URL`);
   assert(yaml.includes("allow_implicit_invocation: true"), `${yamlPath} must explicitly allow implicit invocation`);
 }
 
-for (const asset of ["plugins/erstan/assets/erstan-icon.svg", "plugins/erstan/assets/erstan-logo.svg"]) {
+for (const asset of ["plugins/erstan-beta/assets/erstan-icon.svg", "plugins/erstan-beta/assets/erstan-logo.svg"]) {
   const svg = await text(asset);
   assert(/<svg\b/i.test(svg) && /viewBox="[^"]+"/i.test(svg), `${asset} must be an SVG with a viewBox`);
   assert(!/<script\b|\bon\w+\s*=|\bhref\s*=\s*["']https?:/i.test(svg), `${asset} must not contain scripts, event handlers, or external references`);
@@ -295,6 +301,7 @@ for (const file of textualFiles) {
   for (const [pattern, label] of secretPatterns) {
     assert(!pattern.test(contents), `${file} contains a forbidden ${label}`);
   }
+  assert(!contents.includes(productionMcpUrl), `${file} points at the production MCP endpoint`);
   assert(!containsPrivateSurface(contents), `${file} exposes a private diagnostic surface`);
 }
 
