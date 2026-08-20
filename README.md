@@ -2,9 +2,9 @@
 
 Temporary Erstan Beta integration for AI coding agents. This repository
 packages one broad plugin that connects beta users to Erstan's isolated QA
-environment and supplies focused instructions for building and reviewing
-Agents, operating runs, managing Skills, and working with authorized workspace
-content.
+environment and supplies focused instructions for building, reviewing, and
+optimizing Agents and Skills, operating runs, and working with authorized
+workspace content.
 
 > **Beta environment:** Data and OAuth grants in this plugin are separate from
 > production. Install the production `erstan` plugin when your workspace is
@@ -19,13 +19,23 @@ visibility does not grant product access.
 
 - `erstan-agent-builder` — create, revise, validate, test, and publish Agent
   graphs.
+- `erstan-agent-optimizer` — retrieve an existing Agent and produce the
+  smallest version-correlated optimization proposal.
 - `erstan-agent-review` — review Agent definitions and diagnose runs from
   durable evidence.
 - `erstan-run-operator` — launch published Agents and safely handle waits,
   approvals, and traces.
 - `erstan-skill-manager` — manage complete, versioned Erstan Skill packages.
+- `erstan-skill-optimizer` — retrieve a complete workspace Skill package and
+  optimize it without losing business rules, files, or action metadata.
 - `erstan-work-manager` — work with authorized tasks, projects, documents,
   folders, and files.
+
+The conceptual `agent:optimize` and `skill:optimize` operations are distributed
+as the `$erstan-agent-optimizer` and `$erstan-skill-optimizer` Skills. They are
+not npm CLI commands. By default they stop at an evidence-backed local proposal
+and validation result; updates, live Agent previews, and publication each
+require separate explicit authorization.
 
 ## Permission model
 
@@ -137,6 +147,23 @@ Run the skill validator once for each directory under
 `plugins/erstan-beta/skills`. CI runs the repository-owned release verifier; the
 native Codex, Skill, and Claude validators remain required release gates because
 their availability and schemas are owned by their respective hosts.
+
+## Sync from production
+
+The beta distribution is derived from a reviewed production checkout with an
+explicit identity and endpoint transform. Locally, run:
+
+```text
+npm run sync:production -- --source ../erstan-agent-tools
+```
+
+The command copies the production Skills and assets, aligns plugin metadata,
+keeps the distinct `erstan-beta` identity, and rewrites the hosted MCP endpoint
+to `https://api-qa.erstan.com/v1/mcp`. The manual **Sync production
+distribution** GitHub Actions workflow performs the same transform, validates
+the result, and opens a pull request for review. It does not publish or merge
+the beta release. Pass `--version` only when a later prerelease number is
+needed; the version must remain a prerelease of the production version.
 
 ## Toolkit separation
 

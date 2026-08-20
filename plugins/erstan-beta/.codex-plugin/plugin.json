@@ -1,7 +1,7 @@
 {
   "name": "erstan-beta",
-  "version": "0.1.0-beta.1",
-  "description": "Connect beta users to the isolated Erstan QA environment.",
+  "version": "0.2.0-beta.1",
+  "description": "Build, review, and optimize Erstan Agents and Skills in the isolated QA environment.",
   "author": {
     "name": "Erstan",
     "url": "https://signup.erstan.com/"
@@ -19,8 +19,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Erstan Beta",
-    "shortDescription": "Use Erstan's isolated beta environment",
-    "longDescription": "Use the isolated Erstan QA environment to build and review Agents, operate published runs, manage reusable Skills, and work with authorized beta workspace content.",
+    "shortDescription": "Build and optimize in Erstan Beta",
+    "longDescription": "Use the isolated Erstan QA environment to build, review, and optimize Agents and Skills, operate published runs, and work with authorized beta workspace content.",
     "developerName": "Erstan",
     "category": "Productivity",
     "capabilities": [
@@ -32,9 +32,9 @@
     "privacyPolicyURL": "https://signup.erstan.com/privacy/",
     "termsOfServiceURL": "https://signup.erstan.com/terms/",
     "defaultPrompt": [
-      "Build or safely update an Erstan Agent for this workflow.",
-      "Diagnose this Erstan Agent run and recommend the smallest safe fix.",
-      "Review my Erstan work and carry out the authorized next steps."
+      "Build or optimize an Erstan Beta Agent for this workflow.",
+      "Diagnose this Erstan Beta Agent run and recommend the smallest safe fix.",
+      "Review my Erstan Beta work and carry out the authorized next steps."
     ],
     "brandColor": "#135E73",
     "composerIcon": "./assets/erstan-icon.svg",

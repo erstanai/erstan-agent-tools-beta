@@ -10,8 +10,8 @@
       "name": "erstan-beta",
       "displayName": "Erstan Beta",
       "source": "./plugins/erstan-beta",
-      "description": "Connect beta users to the isolated Erstan QA environment.",
-      "version": "0.1.0-beta.1",
+      "description": "Build, review, and optimize Erstan Agents and Skills in the isolated QA environment.",
+      "version": "0.2.0-beta.1",
       "category": "productivity"
     }
   ]

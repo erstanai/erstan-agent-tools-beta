@@ -1,0 +1,88 @@
+name: Sync production distribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      production_ref:
+        description: Production branch, tag, or commit to copy
+        required: true
+        default: main
+        type: string
+      beta_version:
+        description: Optional beta version; defaults to <production-version>-beta.1
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-production
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out beta distribution
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: beta
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out production distribution
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: erstanai/erstan-agent-tools
+          path: production
+          ref: ${{ inputs.production_ref }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+      - name: Verify production distribution
+        working-directory: production
+        run: npm run verify
+      - name: Transform production into the beta distribution
+        working-directory: beta
+        shell: bash
+        env:
+          BETA_VERSION: ${{ inputs.beta_version }}
+        run: |
+          set -euo pipefail
+          args=(--source ../production)
+          if [[ -n "${BETA_VERSION}" ]]; then
+            args+=(--version "${BETA_VERSION}")
+          fi
+          node scripts/sync-from-production.mjs "${args[@]}"
+      - name: Verify transformed distribution
+        working-directory: beta
+        run: npm run verify
+      - name: Open a review pull request
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRODUCTION_REF: ${{ inputs.production_ref }}
+        run: |
+          set -euo pipefail
+          branch="sync/production-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git -C beta config user.name "github-actions[bot]"
+          git -C beta config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C beta switch -c "${branch}"
+          git -C beta add --all
+          if git -C beta diff --cached --quiet; then
+            echo "Beta already matches the requested production distribution."
+            exit 0
+          fi
+          version="$(node -p "require('./beta/package.json').version")"
+          git -C beta commit -m "chore: sync production to ${version}"
+          gh auth setup-git
+          git -C beta push --set-upstream origin "${branch}"
+          gh pr create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --base main \
+            --head "${branch}" \
+            --title "Sync production distribution to ${version}" \
+            --body "Copies production ref \`${PRODUCTION_REF}\`, applies the reviewed Erstan Beta identity and api-qa endpoint transforms, and passes the beta release verifier."

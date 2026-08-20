@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "erstan-beta",
   "displayName": "Erstan Beta",
-  "version": "0.1.0-beta.1",
-  "description": "Connect beta users to the isolated Erstan QA environment.",
+  "version": "0.2.0-beta.1",
+  "description": "Build, review, and optimize Erstan Agents and Skills in the isolated QA environment.",
   "author": {
     "name": "Erstan",
     "url": "https://signup.erstan.com/"

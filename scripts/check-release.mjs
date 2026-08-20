@@ -12,7 +12,7 @@ const repositoryUrl = "https://github.com/erstanai/erstan-agent-tools-beta";
 const websiteUrl = "https://signup.erstan.com/";
 const privacyPolicyUrl = "https://signup.erstan.com/privacy/";
 const termsOfServiceUrl = "https://signup.erstan.com/terms/";
-const versionPattern = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
+const versionPattern = /^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$/;
 const failures = [];
 
 // SHA-256 fingerprints keep private diagnostic identifiers out of the public
@@ -30,6 +30,7 @@ const expectedFiles = new Set([
   ".claude-plugin/marketplace.json",
   ".gitattributes",
   ".github/workflows/release.yml",
+  ".github/workflows/sync-production.yml",
   ".github/workflows/verify.yml",
   ".gitignore",
   "AGENTS.md",
@@ -47,6 +48,9 @@ const expectedFiles = new Set([
   "plugins/erstan-beta/skills/erstan-agent-builder/SKILL.md",
   "plugins/erstan-beta/skills/erstan-agent-builder/agents/openai.yaml",
   "plugins/erstan-beta/skills/erstan-agent-builder/references/lifecycle-and-graph.md",
+  "plugins/erstan-beta/skills/erstan-agent-optimizer/SKILL.md",
+  "plugins/erstan-beta/skills/erstan-agent-optimizer/agents/openai.yaml",
+  "plugins/erstan-beta/skills/erstan-agent-optimizer/references/optimization-protocol.md",
   "plugins/erstan-beta/skills/erstan-agent-review/SKILL.md",
   "plugins/erstan-beta/skills/erstan-agent-review/agents/openai.yaml",
   "plugins/erstan-beta/skills/erstan-agent-review/references/agent-checklist.md",
@@ -58,17 +62,23 @@ const expectedFiles = new Set([
   "plugins/erstan-beta/skills/erstan-skill-manager/SKILL.md",
   "plugins/erstan-beta/skills/erstan-skill-manager/agents/openai.yaml",
   "plugins/erstan-beta/skills/erstan-skill-manager/references/package-lifecycle.md",
+  "plugins/erstan-beta/skills/erstan-skill-optimizer/SKILL.md",
+  "plugins/erstan-beta/skills/erstan-skill-optimizer/agents/openai.yaml",
+  "plugins/erstan-beta/skills/erstan-skill-optimizer/references/optimization-protocol.md",
   "plugins/erstan-beta/skills/erstan-work-manager/SKILL.md",
   "plugins/erstan-beta/skills/erstan-work-manager/agents/openai.yaml",
   "plugins/erstan-beta/skills/erstan-work-manager/references/work-tools.md",
-  "scripts/check-release.mjs"
+  "scripts/check-release.mjs",
+  "scripts/sync-from-production.mjs"
 ]);
 
 const expectedSkills = [
   "erstan-agent-builder",
+  "erstan-agent-optimizer",
   "erstan-agent-review",
   "erstan-run-operator",
   "erstan-skill-manager",
+  "erstan-skill-optimizer",
   "erstan-work-manager"
 ];
 
@@ -200,7 +210,8 @@ const mcp = await json("plugins/erstan-beta/.mcp.json");
 
 assert(packageJson.private === true, "package.json must remain private to prevent accidental npm publication");
 assert(packageJson.name === "erstan-agent-tools-beta", "package.json name must identify the beta distribution");
-assert(versionPattern.test(packageJson.version ?? ""), "package.json must use semantic versioning");
+assert(versionPattern.test(packageJson.version ?? ""), "package.json must use a semantic prerelease version");
+assert(packageJson.scripts?.["sync:production"] === "node scripts/sync-from-production.mjs", "package.json must expose the production sync command");
 if (process.env.RELEASE_TAG) {
   assert(
     process.env.RELEASE_TAG === `v${packageJson.version}`,

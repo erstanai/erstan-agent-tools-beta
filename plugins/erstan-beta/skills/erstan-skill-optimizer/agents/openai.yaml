@@ -1,0 +1,13 @@
+interface:
+  display_name: "Erstan Skill Optimizer"
+  short_description: "Optimize Skills without losing business rules"
+  default_prompt: "Use $erstan-skill-optimizer to retrieve this Skill and produce a validated optimization proposal."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "erstan-beta"
+      description: "Erstan hosted MCP server"
+      transport: "streamable_http"
+      url: "https://api-qa.erstan.com/v1/mcp"
+policy:
+  allow_implicit_invocation: true

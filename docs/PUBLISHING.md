@@ -7,19 +7,23 @@ instructions directly to approved beta users.
 
 ## Release checklist
 
-1. Confirm `https://api-qa.erstan.com/v1/mcp` is beta-ready and exposes the
+1. Run the manual **Sync production distribution** workflow for the reviewed
+   production ref and inspect its pull request. The workflow applies the beta
+   identity and QA endpoint transform; it never merges or publishes.
+2. Confirm `https://api-qa.erstan.com/v1/mcp` is beta-ready and exposes the
    OAuth discovery and authorization behavior required by each target host.
-2. Confirm tool annotations, input and output schemas, error behavior, and
+3. Confirm tool annotations, input and output schemas, error behavior, and
    approval boundaries match the public Skills.
-3. Bump the same semantic version in `package.json`, both plugin manifests, and
-   the Claude marketplace entry. The release checker enforces alignment.
-4. Run `npm run verify` and all native validators documented in the README.
-5. Review the exact Git archive. The release checker rejects files outside the
+4. Confirm the sync selected the same prerelease version in `package.json`, both
+   plugin manifests, and the Claude marketplace entry. The release checker
+   enforces alignment.
+5. Run `npm run verify` and all native validators documented in the README.
+6. Review the exact Git archive. The release checker rejects files outside the
    allowlist and any symlink in the distribution.
-6. Merge the reviewed commit to `main`, then push a `v<package-version>` tag on
+7. Merge the reviewed commit to `main`, then push a `v<package-version>` tag on
    that exact commit. The release workflow verifies the tag and creates the
    GitHub release and archives automatically.
-7. Test a fresh Codex install and a fresh Claude Code install with an approved
+8. Test a fresh Codex install and a fresh Claude Code install with an approved
    beta user,
    OAuth grant, narrow permissions, approval, denial, revocation, and expiry.
 
@@ -27,11 +31,11 @@ instructions directly to approved beta users.
 
 The tag must exactly match the version shared by `package.json`, both plugin
 manifests, and the Claude marketplace entry. For example, version
-`0.1.0-beta.1` must be released as `v0.1.0-beta.1`:
+`0.2.0-beta.1` must be released as `v0.2.0-beta.1`:
 
 ```text
-git tag v0.1.0-beta.1
-git push origin v0.1.0-beta.1
+git tag v0.2.0-beta.1
+git push origin v0.2.0-beta.1
 ```
 
 `.github/workflows/release.yml` then runs the distribution verifier, creates

@@ -1,15 +1,16 @@
 {
   "name": "erstan-agent-tools-beta",
-  "version": "0.1.0-beta.1",
+  "version": "0.2.0-beta.1",
   "private": true,
-  "description": "Temporary Erstan Beta plugin and skills for AI coding agents.",
+  "description": "Temporary Erstan Beta plugin and skills for building, reviewing, and optimizing Agents and Skills.",
   "type": "module",
   "engines": {
     "node": ">=20.12"
   },
   "scripts": {
     "check:release": "node scripts/check-release.mjs",
-    "verify": "npm run check:release"
+    "verify": "npm run check:release",
+    "sync:production": "node scripts/sync-from-production.mjs"
   },
   "license": "Apache-2.0"
 }
