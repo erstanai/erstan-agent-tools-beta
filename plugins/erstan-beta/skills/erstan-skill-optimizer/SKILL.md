@@ -57,6 +57,10 @@ before proposing or applying a package change.
   files or executable actions.
 - Do not shorten instructions by deleting fixed mappings, validation gates,
   approvals, idempotency, reconciliation, recovery, or completion evidence.
+- When adding batching, batch only read-only tools; writes stay
+  one-per-`tool_invoke` (large args via `argsSource` `workbench_json` from
+  `state/`/`output/`), and bulk results are consumed in code from the result
+  artifact, never via `er_tool_result_read`.
 - Do not convert model-readable procedure into code unless deterministic
   execution materially improves reliability and the action's side effects are
   declared accurately.

@@ -23,7 +23,7 @@ usage only when present.
 | Boundary | Optimize here when the evidence concerns |
 | --- | --- |
 | Agent | Graph shape, node responsibility, routing, model/tool/Skill policy, bindings, approval design, node-level instructions |
-| Skill | Reusable domain rules, parsing, mappings, batching, recovery, reconciliation, examples, executable actions |
+| Skill | Reusable domain rules, parsing, mappings, batching (read-only batch children; per-item governed writes), recovery, reconciliation, examples, executable actions |
 | Platform | Generic routing, persistence, replay, context projection, approvals, effect tracking, export/retention, cross-Agent behavior |
 | Connector/provider | Upstream schema, authentication, validation, provider timeout, or error fidelity |
 

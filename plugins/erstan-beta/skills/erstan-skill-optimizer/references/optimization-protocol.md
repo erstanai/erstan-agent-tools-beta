@@ -20,7 +20,10 @@ persisted separately.
 Skill-owned improvements include:
 
 - input signature and applicability rules;
-- reusable parsing, mappings, validation, batching, and recovery;
+- reusable parsing, mappings, validation, batching (read-only
+  `tool_batch_invoke` children with results consumed in code from the batch
+  artifact; writes remain individual `tool_invoke` calls, using `argsSource`
+  `workbench_json` for large args), and recovery;
 - exact tool argument contracts and provider-specific business procedure;
 - stable identities, duplicate handling, reconciliation, and safe retries;
 - examples or references needed across Agents;
