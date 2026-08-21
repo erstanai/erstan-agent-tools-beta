@@ -28,6 +28,24 @@
   host surface that explicitly offers cancellation, then confirm with
   `get_run`.
 
+## Follow-up turns
+
+A chat-lane run is one conversation; `continue_run` sends the next user
+message after the run completes.
+
+- Only a `completed` chat run continues. The same run ID re-queues with full
+  prior conversation context; poll `get_run` for the new turn's result.
+- Waiting runs keep their exact interaction contract: answer with
+  `reply_to_run` or decide with `decide_run_approval`. Never use
+  `continue_run` to answer a wait.
+- `run_still_active` means a turn is already executing — poll and retry after
+  it completes. `run_not_continuable` is durable for that run: structured
+  lanes, draft tests, failed or cancelled runs, and Agents whose graphs pause
+  on dedicated human-input nodes do not take free-form follow-up turns; start
+  a new `run_agent` run.
+- Reuse one `idempotencyKey` per logical turn so a retry cannot double-send
+  the message.
+
 ## Durable evidence
 
 Use `get_run_trace` for execution mechanism:
