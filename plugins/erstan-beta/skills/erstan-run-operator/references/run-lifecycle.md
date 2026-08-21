@@ -30,21 +30,27 @@
 
 ## Follow-up turns
 
-A chat-lane run is one conversation; `continue_run` sends the next user
-message after the run completes.
+A run belongs to one conversation thread; `continue_run` sends the next user
+message after the run reaches a terminal status.
 
-- Only a `completed` chat run continues. The same run ID re-queues with full
-  prior conversation context; poll `get_run` for the new turn's result.
+- Always poll `get_run` with the run ID **returned by `continue_run`**. A
+  completed chat run of an interactive Agent usually continues under the same
+  ID with full conversation context. Failed or cancelled chat runs fork a new
+  run ID on the same thread. Agents that use post-run continuation
+  (non-interactive Agents and graphs with dedicated human-input nodes) fork
+  the conversational post-run shell — it answers with the source run's tool
+  and Skill capabilities but does not re-execute the authored graph; use it
+  for questions and light follow-up work about the run, and start a new
+  `run_agent` run when the full graph must run again. Completed structured
+  runs of such Agents accept post-run questions this way too.
 - Waiting runs keep their exact interaction contract: answer with
   `reply_to_run` or decide with `decide_run_approval`. Never use
   `continue_run` to answer a wait.
 - `run_still_active` means a turn is already executing — poll and retry after
-  it completes. `run_not_continuable` is durable for that run: structured
-  lanes, draft tests, failed or cancelled runs, and Agents whose graphs pause
-  on dedicated human-input nodes do not take free-form follow-up turns; start
-  a new `run_agent` run.
+  it completes. `run_not_continuable` is durable for that run (draft tests
+  and structured runs of interactive Agents); start a new `run_agent` run.
 - Reuse one `idempotencyKey` per logical turn so a retry cannot double-send
-  the message.
+  the message; a retried key rejoins the same turn and run ID.
 
 ## Durable evidence
 

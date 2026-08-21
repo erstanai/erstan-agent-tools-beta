@@ -38,13 +38,14 @@ continuing a run.
      re-read; never reuse an older interaction ID.
 6. Stop polling at `completed`, `failed`, or `cancelled`. Report the durable
    status, final response or error, and any unresolved external effect.
-7. To send the next message of the same conversation after a chat run
-   completes, call `continue_run` with the run ID and the message (attachments
-   optional, `idempotencyKey` recommended). The run keeps its ID and re-queues
-   with full conversation context; resume polling `get_run`. `continue_run` is
-   only for `completed` chat runs — a waiting run takes `reply_to_run` or
-   `decide_run_approval`, and `run_not_continuable` means start a new
-   `run_agent` run instead.
+7. To send the next message of the same conversation after a run reaches a
+   terminal status, call `continue_run` with the run ID and the message
+   (attachments optional, `idempotencyKey` recommended). Always resume polling
+   `get_run` with the run ID **returned by the call**: a completed chat run
+   usually continues under the same ID, while failed/cancelled chat runs and
+   post-run-continuation agents fork a new run ID on the same conversation
+   thread. A waiting run takes `reply_to_run` or `decide_run_approval`
+   instead, and `run_not_continuable` means start a new `run_agent` run.
 8. When mechanism matters, page `get_run_trace` chronologically through every
    cursor. Pair tool calls and results by call and occurrence identity rather
    than tool name alone.
