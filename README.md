@@ -28,8 +28,10 @@ visibility does not grant product access.
 - `erstan-skill-manager` — manage complete, versioned Erstan Skill packages.
 - `erstan-skill-optimizer` — retrieve a complete workspace Skill package and
   optimize it without losing business rules, files, or action metadata.
-- `erstan-work-manager` — work with authorized tasks, projects, documents,
-  folders, and files.
+- `erstan-work-manager` — work with complete authorized Task properties,
+  selectable relations, subtasks, attachments/references, comments,
+  participants, reactions, lifecycle, Task-linked runs/approvals, projects,
+  documents, folders, and files.
 
 The conceptual `agent:optimize` and `skill:optimize` operations are distributed
 as the `$erstan-agent-optimizer` and `$erstan-skill-optimizer` Skills. They are
@@ -49,7 +51,11 @@ the read-only **View runs**, **View work**, **View documents**, and **View
 files** permissions. It does not permit task, document, or file writes. Use
 **Review** for read-only access. For writes, use **Custom** with the applicable
 **Manage work**, **Edit documents**, or **Edit files** permission, or choose
-**Full access**.
+**Full access**. **Manage work** includes Task updates, structured attachments,
+and Task-linked run replies/approval decisions. **View work** includes runs and
+traces reached through an exact visible Task relationship; those Task paths do
+not also require **View runs** or **Run agents**. Retrieving Team-file bytes
+still requires **View files**.
 
 Users manage and revoke the connection in **Settings > Connected apps**.
 Reducing access takes effect directly. Increasing permissions or changing to a
