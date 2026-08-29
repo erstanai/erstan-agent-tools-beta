@@ -111,9 +111,44 @@
   base64. Updates are versioned, but still require correct target selection and
   readback.
 
+## Sheets
+
+- A native Erstan Sheet is not an uploaded workbook File. `sheetId` identifies
+  the native resource; `worksheet` identifies a tab inside its workbook. Never
+  pass one where the other is required or silently reinterpret a `fileId` as a
+  `sheetId`.
+- Use `list_sheets` to discover accessible native Sheets and `read_sheet` for
+  bounded metadata, preview, exact rows, or analysis. Reads bind cursors and
+  selections to an immutable version and checksum.
+- `create_sheet` creates a blank native Sheet or copies an authorized retained
+  Sheet version. Hosted `import_sheet` copies an allowlisted Team File into a
+  new native Sheet; it never mutates or deletes the source. Attachment imports
+  are available only on Erstan's context-bound internal tool surface.
+- `update_sheet` applies one ordered atomic operation batch.
+  `write_sheet_dataset` replaces, appends, or overlays a bounded dataset or an
+  attested server-side snapshot without routing every row through model
+  context.
+- Read immediately before a content write and pass the returned head as
+  `expectedVersion`. Supply a new `idempotencyKey` for each new write intent and
+  reuse it verbatim only when reconciling or retrying that same intent. A
+  `sheet_version_conflict` is not retry permission: re-read and reconcile.
+- Formula overwrite is denied unless the affected operation explicitly opts
+  in. Treat formula-derived results as authoritative only when `read_sheet` or
+  the write result reports an authoritative calculated state.
+- `export_sheet` returns an authorized reference to an immutable XLSX version,
+  or a single explicitly selected worksheet as CSV. It does not mutate the
+  Sheet and does not return workbook bytes in model context.
+- Use `list_sheet_versions` to inspect retained immutable history.
+  `restore_sheet_version` copies one retained source into a new head; it never
+  rewinds or edits history. Supply the exact current `expectedVersion` and a
+  caller-stable `idempotencyKey`, then verify the returned new version.
+- Workbooks with unsafe, rich, or unsupported features may be readable and
+  exportable while editing remains unavailable. Do not work around a capability
+  rejection by switching to generic File writes.
+
 ## Access failures
 
-Task, document, and file access is constrained by both scope and project/team
+Task, document, Sheet, and file access is constrained by both scope and project/team
 allowlists. Treat not-found and forbidden results as boundaries. Ask the user
 to change the Erstan connection grant when broader access is genuinely needed;
 the model must not attempt to expand its own permissions.
