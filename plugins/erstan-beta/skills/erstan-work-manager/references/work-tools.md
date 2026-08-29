@@ -121,8 +121,9 @@
   bounded metadata, preview, exact rows, or analysis. Reads bind cursors and
   selections to an immutable version and checksum.
 - `create_sheet` creates a blank native Sheet or copies an authorized retained
-  Sheet version. `import_sheet` copies an authorized File or attachment into a
-  new native Sheet; it never mutates or deletes the source.
+  Sheet version. Hosted `import_sheet` copies an allowlisted Team File into a
+  new native Sheet; it never mutates or deletes the source. Attachment imports
+  are available only on Erstan's context-bound internal tool surface.
 - `update_sheet` applies one ordered atomic operation batch.
   `write_sheet_dataset` replaces, appends, or overlays a bounded dataset or an
   attested server-side snapshot without routing every row through model
