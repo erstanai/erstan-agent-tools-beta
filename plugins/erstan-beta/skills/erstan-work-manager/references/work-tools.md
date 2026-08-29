@@ -137,6 +137,10 @@
 - `export_sheet` returns an authorized reference to an immutable XLSX version,
   or a single explicitly selected worksheet as CSV. It does not mutate the
   Sheet and does not return workbook bytes in model context.
+- Use `list_sheet_versions` to inspect retained immutable history.
+  `restore_sheet_version` copies one retained source into a new head; it never
+  rewinds or edits history. Supply the exact current `expectedVersion` and a
+  caller-stable `idempotencyKey`, then verify the returned new version.
 - Workbooks with unsafe, rich, or unsupported features may be readable and
   exportable while editing remains unavailable. Do not work around a capability
   rejection by switching to generic File writes.
