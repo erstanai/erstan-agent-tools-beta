@@ -31,7 +31,7 @@ visibility does not grant product access.
 - `erstan-work-manager` — work with complete authorized Task properties,
   selectable relations, subtasks, attachments/references, comments,
   participants, reactions, lifecycle, Task-linked runs/approvals, projects,
-  documents, folders, and files.
+  documents, native Sheets, folders, and files.
 
 The conceptual `agent:optimize` and `skill:optimize` operations are distributed
 as the `$erstan-agent-optimizer` and `$erstan-skill-optimizer` Skills. They are
