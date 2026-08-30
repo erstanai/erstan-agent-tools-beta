@@ -50,11 +50,22 @@
   response, use `read_task` to reconcile the expected comment and attachment;
   do not repeat the write unless the durable state proves it did not commit.
 - `add_task_attachment` accepts `upload` (`name`, `type`, `base64`),
-  `team_file` (`teamFileId`), `document` (`documentId`), or `external_url`
-  (HTTP/HTTPS `url`). Inbox references are deliberately excluded.
+  `team_file` (`teamFileId`), `document` (`documentId`), `sheet` (`sheetId`),
+  or `external_url` (HTTP/HTTPS `url`). Inbox references are deliberately
+  excluded. Attaching a Sheet requires **View sheets**, and the exact Sheet
+  must belong to an allowlisted Team.
+- Inside an Erstan Agent execution, the equivalent Task operation is
+  `er_task_reference_attach` with `kind: "sheet"` and the exact `sheetId`.
+  Use the returned Task attachment ID only to remove that relationship; it is
+  not a Sheet ID and must not be passed to Sheet tools.
+- In Task comments, descriptions, or Agent output, link a native Sheet with
+  `[sheet: <display name> (sheetId: <exact sheet ID>)]`. The smart reference
+  enables the shared Sheet card and canvas, but does not attach the Sheet to a
+  Task by itself; call the attachment tool when the Task relationship is
+  required. Never resolve or reconstruct a smart reference from a title alone.
 - `remove_task_attachment` removes only the TaskAttachment relationship. It
-  never deletes the underlying Team file or document. Treat a lost response as
-  ambiguous and reconcile with `read_task` before retrying.
+  never deletes the underlying Team file, document, or native Sheet. Treat a
+  lost response as ambiguous and reconcile with `read_task` before retrying.
 - `add_task_participant` accepts a valid workspace/team user or eligible Agent.
   Assignee/reviewer roles also update the Task's corresponding property.
 - `add_task_reaction` and `remove_task_reaction` target either the Task
@@ -128,6 +139,14 @@
   `write_sheet_dataset` replaces, appends, or overlays a bounded dataset or an
   attested server-side snapshot without routing every row through model
   context.
+- `create_sheet`, `import_sheet`, `update_sheet`, `write_sheet_dataset`, and
+  `restore_sheet_version` return a canonical native Sheet artifact alongside
+  their write result. The Agent-tool equivalents are `er_sheet_create`,
+  `er_sheet_import`, `er_sheet_update`, `er_sheet_write_dataset`, and
+  `er_sheet_version_restore`. Preserve the returned `artifactRef`—including
+  `type: "sheet"`, exact `sheetId`, Team, title, URL, and immutable version—for
+  Chat or Task canvas rendering and later Sheet calls. Do not rebuild artifact
+  identity from a display name or treat a generic workbook File as equivalent.
 - Read immediately before a content write and pass the returned head as
   `expectedVersion`. Supply a new `idempotencyKey` for each new write intent and
   reuse it verbatim only when reconciling or retrying that same intent. A
@@ -135,9 +154,11 @@
 - Formula overwrite is denied unless the affected operation explicitly opts
   in. Treat formula-derived results as authoritative only when `read_sheet` or
   the write result reports an authoritative calculated state.
-- `export_sheet` returns an authorized reference to an immutable XLSX version,
-  or a single explicitly selected worksheet as CSV. It does not mutate the
-  Sheet and does not return workbook bytes in model context.
+- `export_sheet` (or `er_sheet_export` inside an Erstan Agent) returns a
+  downloadable authorized reference to an immutable XLSX version, or a single
+  explicitly selected worksheet as CSV. Use the returned download path before
+  its expiry; request a fresh export reference after expiry. Export does not
+  mutate the Sheet and does not put workbook bytes in model context.
 - Use `list_sheet_versions` to inspect retained immutable history.
   `restore_sheet_version` copies one retained source into a new head; it never
   rewinds or edits history. Supply the exact current `expectedVersion` and a

@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "erstan-beta",
   "displayName": "Erstan Beta",
-  "version": "0.2.0-beta.1",
+  "version": "0.2.1-beta.1",
   "description": "Build, review, and optimize Erstan Agents and Skills in the isolated QA environment.",
   "author": {
     "name": "Erstan",

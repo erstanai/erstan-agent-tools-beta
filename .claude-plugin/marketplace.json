@@ -11,7 +11,7 @@
       "displayName": "Erstan Beta",
       "source": "./plugins/erstan-beta",
       "description": "Build, review, and optimize Erstan Agents and Skills in the isolated QA environment.",
-      "version": "0.2.0-beta.1",
+      "version": "0.2.1-beta.1",
       "category": "productivity"
     }
   ]

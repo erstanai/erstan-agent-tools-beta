@@ -74,6 +74,9 @@ second Runs permission or substitute the general same-credential run tools.
 - Before changing a native Sheet, read its exact head version and pass that
   version to the write. A version conflict requires a fresh read and explicit
   reconciliation; never replay stale workbook intent over the new head.
+- When linking a native Sheet in Task or Chat content, use the exact `sheetId`
+  returned by a Sheet tool in a `[sheet: ... (sheetId: ...)]` smart reference.
+  A Sheet title is display text, not identity.
 - Before moving a subtask, verify the intended parent, same Task scope, and
   resulting order. Never work around a cycle, terminal-parent, or scope error.
 - Use `get_task_lifecycle_impact` before archive/delete. `delete_task` requires
