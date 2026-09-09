@@ -14,6 +14,10 @@ Read [lifecycle and graph rules](references/lifecycle-and-graph.md) before
 creating or changing a graph. The live guide, node catalog, and tool schemas
 remain authoritative when that reference differs.
 
+Only when the user asks for JavaScript or a private-repository workflow, read
+the [optional SDK guide](references/sdk-workflows.md). SDK usage and a test
+framework are not prerequisites for MCP authoring.
+
 ## Workflow
 
 1. Establish the intended Agent behavior, owner team, inputs, outputs, tool and
@@ -33,13 +37,17 @@ remain authoritative when that reference differs.
    when the live schema supports that path. Resolve errors within the requested
    scope. Report unrelated pre-existing errors instead of silently expanding
    the change.
-6. Use `create_agent` for a new draft or `update_agent` with the latest
-   `revision` for an existing draft. Re-read or use the returned revision after
-   every successful mutation.
+6. Use `create_agent` for a new draft or `update_agent` with the `revision`
+   paired with the edited baseline for an existing draft. Preserve the returned
+   content and revision together after every successful mutation. Never attach
+   a newly fetched guard to stale local content without reconciling changes.
 7. Validate the persisted draft. Treat `valid: false` as a failed validation
    even when the MCP call itself succeeded.
 8. Call `test_agent` only when the user explicitly authorizes a live preview.
-   Preview uses real tools and may create external effects.
+   Supply the selected draft's `version` and its `revision` when advertised.
+   Follow the reference for explicit top-level `skillVersions` selections;
+   never hide them inside business `input`. Preview uses real tools and may
+   create external effects. It is not a prerequisite for publication.
 9. Call `publish_agent` only after an explicit publication request, successful
    validation, and a final check that the exact current revision is intended.
    Never describe a draft as published unless the tool confirms publication.
@@ -50,8 +58,9 @@ remain authoritative when that reference differs.
   `publish_agent`. After a timeout or lost response, reuse that key only with
   byte-for-byte equivalent intent and arguments. Never reuse it for a changed
   graph, revision, version, or publication decision.
-- Re-read before choosing a new key after an ambiguous mutation. Do not use an
-  idempotency key to bypass a revision or version conflict.
+- After an ambiguous mutation, re-read and reconcile before any new write.
+  If the outcome remains uncertain, stop; do not generate a new key just to
+  retry. Do not use a key to bypass a revision or version conflict.
 - On a revision or version conflict, re-read once and reapply only the requested
   change when concurrent edits do not overlap. Stop when they affect the same
   behavior or a second conflict occurs.

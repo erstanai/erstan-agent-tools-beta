@@ -6,8 +6,8 @@ description: "Validate, inspect, create, update, and publish complete Erstan Ski
 # Erstan Skill manager
 
 Manage complete Skill packages with explicit lifecycle decisions and optimistic
-version guards. Do not assume that an edit to a published Skill is isolated
-from its live package.
+version guards. Check the live staged-save capability before editing a
+published Skill; saving and publication are separate on supporting servers.
 
 ## Reference
 
@@ -18,6 +18,9 @@ create, update, or publication.
 
 1. Establish whether the request is local review, server validation, draft
    creation, update, or publication. Do not combine these stages implicitly.
+   Read `get_agent_builder_guide`: `lifecycle.skillSavesAreDrafts: true`
+   establishes staged Skill saves. If absent or false, follow the legacy or
+   unknown-server boundary in the lifecycle reference; never assume isolation.
 2. Build or inspect the complete package: required `SKILL.md`, every related
    text file by relative path, and declared sandbox action metadata. Before
    submission, reject absolute, traversal, or reserved paths; case-insensitive
@@ -35,23 +38,28 @@ create, update, or publication.
    draft. The tool has no idempotency key. After a timeout or lost response,
    search workspace Skills with `list_agent_skills`, inspect candidates with
    `get_agent_skill`, and reconcile the immutable `packageName` and complete
-   package before any retry. Stop when the result is ambiguous.
+   package before any retry. The binding catalog may omit drafts: absence is
+   not proof creation failed. Stop when the result is ambiguous.
 5. For an existing workspace Skill, call `get_agent_skill` immediately before
-   editing and inspect its lifecycle status. Use this tool only with workspace
+   editing and inspect its lifecycle status, `currentVersion`, and, when
+   exposed, `publishedVersion` and `hasDraft`. Use this tool only with workspace
    Skill IDs; it cannot read `system:<key>` refs. Preserve files and actions
-   outside the requested change and pass the returned current version as
-   `expectedVersion` to `update_agent_skill`.
+   outside the requested change and pass the version paired with the edited
+   package as `expectedVersion` to `update_agent_skill`.
    - If the Skill is a draft, update it within the authorized scope.
-   - If it is published, explain that `update_agent_skill` changes the live
-     package immediately; there is no isolated draft fork. Require explicit
-     authorization for that live change. If the user requested a draft,
-     preview, or review-only change, do not update it.
+   - With staged saves confirmed, updating a published Skill saves a new draft
+     while the previous published package remains live. A published status
+     with `hasDraft: true` is valid; do not change `status` to force staging.
+   - Omit lifecycle status changes unless separately authorized. A request for
+     review or validation alone does not authorize saving a draft.
 6. If a version conflict occurs, re-read once, reconcile non-overlapping
    changes, revalidate the complete merged package, and retry once. Stop on
    overlap or another conflict.
 7. Call `publish_agent_skill` only after explicit user approval, successful
-   validation, and a fresh current version. Publication is separate from
-   create and update.
+   validation of the exact approved package, using its `expectedVersion`.
+   Re-read to detect drift, not to attach a fresh guard to unreviewed content.
+   Publication is separate from create and update, and affects future consumers
+   of a shared Skill; already admitted snapshot-backed runs keep their selection.
 8. Report the Skill ID, version, lifecycle status, validation results, and any
    action still requiring human approval.
 

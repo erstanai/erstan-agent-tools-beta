@@ -48,6 +48,7 @@ const expectedFiles = new Set([
   "plugins/erstan-beta/skills/erstan-agent-builder/SKILL.md",
   "plugins/erstan-beta/skills/erstan-agent-builder/agents/openai.yaml",
   "plugins/erstan-beta/skills/erstan-agent-builder/references/lifecycle-and-graph.md",
+  "plugins/erstan-beta/skills/erstan-agent-builder/references/sdk-workflows.md",
   "plugins/erstan-beta/skills/erstan-agent-optimizer/SKILL.md",
   "plugins/erstan-beta/skills/erstan-agent-optimizer/agents/openai.yaml",
   "plugins/erstan-beta/skills/erstan-agent-optimizer/references/optimization-protocol.md",

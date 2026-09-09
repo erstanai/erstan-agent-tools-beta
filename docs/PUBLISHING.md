@@ -27,6 +27,31 @@ instructions directly to approved beta users.
    beta user,
    OAuth grant, narrow permissions, approval, denial, revocation, and expiry.
 
+## Staged-authoring rollout checks
+
+The sync copies packaged instructions; hosted MCP tool schemas come from QA at
+connection time. Neither an SDK update nor a backend deployment updates the
+installed plugin. After sync, review the QA builder guide and schemas:
+
+- `lifecycle.skillSavesAreDrafts` must confirm isolated Skill saves, and
+  `lifecycle.agentPresentationVersioned` must confirm staged presentation edits.
+  Missing or unknown support must stop draft-only edits of published Skills.
+  The public REST authoring feature flag does not establish MCP lifecycle safety.
+- Exact draft Skill previews require the advertised `test_agent` revision and
+  Skill-version fields. Never drop unsupported selections or hide them in input.
+- In an authorized QA release-test workspace, verify save versus publication,
+  retention of already admitted Skill snapshots, stale-guard conflicts, and
+  ambiguous-write reconciliation. Live previews and publication tests require
+  explicit authorization; syncing a plugin does not grant it.
+- Confirm the reviewed SDK is available before prescribing installation. The
+  same SDK targets either environment by explicit API origin and workspace;
+  the beta plugin stays on its fixed QA MCP endpoint with OAuth.
+
+Keep version bumps, tags, SDK publication, backend deployment, and installed
+plugin updates as separate reviewed release actions. Beta may validate against
+a reviewed production-plugin commit before that commit is merged or released;
+record the source commit in the sync PR and rerun sync if the source changes.
+
 ## Automated GitHub release
 
 The tag must exactly match the version shared by `package.json`, both plugin

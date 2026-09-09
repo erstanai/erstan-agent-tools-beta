@@ -11,6 +11,16 @@
   server-readable. The complete request is limited to 25 MB.
 - Reuse the same idempotency key for the same logical launch attempt.
 
+## Skill snapshots
+
+On snapshot-capable deployments, newly admitted runs capture exact immutable
+Skill versions. Those runs and their continuations retain the selected packages
+after a later Skill save or publication. Do not restart a run just to refresh a
+Skill without a new-run request; a restart can repeat external effects. Draft
+Skill selections belong only to an explicitly authorized builder preview, not
+ordinary `run_agent` business input. For legacy runs without snapshot evidence,
+report the limitation instead of assuming the latest Skill package was used.
+
 ## Poll and wait
 
 `get_run` is authoritative for lifecycle state. A waiting run may expose a

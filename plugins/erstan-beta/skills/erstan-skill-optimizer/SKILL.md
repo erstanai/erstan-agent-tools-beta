@@ -8,25 +8,31 @@ description: "Retrieve and optimize an existing workspace Erstan Skill from its 
 Produce a complete, reviewable Skill package candidate that improves reusable
 behavior while preserving business rules, related files, action metadata, and
 lifecycle safety. Optimization is proposal-only unless the user explicitly
-authorizes a live workspace update or later publication.
+authorizes a saved workspace update, live preview, or later publication.
 
 ## Required protocol
 
 Read [the Skill optimization protocol](references/optimization-protocol.md)
 before proposing or applying a package change.
+Before a saved update or publication, also read the shared
+[package lifecycle rules](../erstan-skill-manager/references/package-lifecycle.md).
 
 ## Workflow
 
 1. Establish the requested stage: analysis, local candidate, server
-   validation, live package update, or publication. Do not combine stages.
+   validation, saved package update, live preview, or publication. Do not combine
+   stages. Read `get_agent_builder_guide` to check `lifecycle.skillSavesAreDrafts`
+   before assuming a published Skill can be edited without a live change.
 2. Call `list_agent_skills` when discovery is required, then
    `get_agent_skill` for the exact workspace Skill ID. It cannot retrieve a
    `system:<key>` Skill. Record the immutable package name, current version,
-   lifecycle status, complete `packageJson`, files, and action declarations.
+   lifecycle status, `publishedVersion` and `hasDraft` when exposed, complete
+   `packageJson`, files, and action declarations.
 3. Correlate run evidence by Agent ID, executed Agent version, and bound Skill
-   ID. When an export contains the exact executed Skill prompt but not a Skill
-   version, compare content cautiously and record that historical package
-   identity remains unverified.
+   ID and immutable Skill version identity when exposed. The latest package
+   may be an unpublished draft, not what ran. When an export contains the exact
+   executed Skill prompt but not its version, compare content cautiously and
+   record that historical package identity remains unverified.
 4. Inspect `SKILL.md`, every related text file, and every executable action as
    one package. Identify repeated instructions, irrelevant always-loaded
    context, ambiguous tool arguments, missing batching/recovery/reconciliation,
@@ -42,11 +48,15 @@ before proposing or applying a package change.
    returned normalized `packageJson` with the submitted package and stop on a
    dropped/coerced file, path, action, runtime, language, or side-effect field.
 8. Stop at the validated proposal unless a workspace update is explicitly
-   authorized. Re-read immediately before an authorized update and use the
-   latest `currentVersion` as `expectedVersion`.
-9. A published Skill has no isolated draft fork: `update_agent_skill` changes
-   its live package immediately. Require explicit live-change authorization;
-   a request to optimize, preview, validate, or create a proposal is not enough.
+   authorized. Re-read before an authorized update, reconcile drift without
+   overwriting concurrent changes, and revalidate the complete candidate. Use
+   the `currentVersion` paired with that baseline as `expectedVersion`.
+9. With `lifecycle.skillSavesAreDrafts: true`, an update stages a new package
+   and keeps the prior published package live. Do not change status to stage it.
+   Otherwise follow the legacy/unknown-server boundary in the lifecycle rules;
+   a draft-only request must never become an immediate live change. For an
+   explicitly authorized Agent preview of this draft Skill, follow the shared
+   [guarded preview rules](../erstan-agent-builder/references/lifecycle-and-graph.md).
 10. Call `publish_agent_skill` only after separate publication approval for an
     exact validated draft version.
 
@@ -73,4 +83,4 @@ before proposing or applying a package change.
 Lead with whether the evidence supports a Skill change. Provide package/version
 identity, findings by owner/severity, changed files/actions, a structured diff,
 validation and normalization comparison, expected measurements, evaluation
-cases, and any live update or publication still requiring approval.
+cases, and any saved update, live preview, or publication still requiring approval.

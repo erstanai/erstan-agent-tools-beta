@@ -6,11 +6,15 @@ example at the expense of its contract.
 ## Establish the baseline
 
 Retrieve the complete current workspace package with `get_agent_skill`. Record
-the Skill ID, immutable package name, current version, lifecycle status,
+the Skill ID, immutable package name, current version, published version and
+draft state when exposed, lifecycle status,
 `SKILL.md`, every related file, and every action field. System Skill packages
 are not readable and therefore cannot be optimized through this workflow.
 
-Correlate diagnostics with the bound Skill ID and executed Agent version. A
+The current package may be an unpublished draft. Correlate diagnostics with the
+bound Skill ID, executed Agent version, and immutable Skill version identity
+when present. Do not substitute the current draft or latest publication for a
+run's selected snapshot. Legacy evidence without a snapshot remains unknown. A
 combined executed Skill prompt can establish instructions visible to the model,
 but does not establish the historical Skill version unless that version is
 persisted separately.

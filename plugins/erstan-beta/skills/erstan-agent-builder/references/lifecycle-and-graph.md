@@ -8,16 +8,51 @@ Use this reference as a guardrail, then retrieve the live contract from Erstan.
 - `get_agent` is the source of the complete current graph, version, published
   state, and opaque revision.
 - `update_agent` replaces only the supplied editable fields and requires the
-  latest revision. Submit complete `nodes` and `edges` when changing the graph.
+  revision paired with the edited baseline. Submit complete `nodes` and `edges`
+  when changing the graph. Retain returned content and its revision together;
+  revisions from historical version reads are not current write guards.
 - `validate_agent` is non-mutating but requires authoring scopes.
 - `test_agent` runs the current draft with real integrations and normal
   approval rules.
-- `publish_agent` revalidates and publishes the exact guarded revision.
+- `publish_agent` revalidates and publishes the exact approved guarded revision.
+  It does not automatically publish bound Skills; publish required Skills
+  separately only with explicit approval. Validation, preview, and publication
+  are independent operations, not an imposed testing or deployment workflow.
 - `run_agent` operates a published snapshot and is not a draft-test substitute.
 
-After an Agent has been published, externally editable metadata may be more
-restricted than graph fields. Follow the live guide and use the Erstan UI when
-it identifies an app-only change.
+When `get_agent_builder_guide` advertises
+`lifecycle.agentPresentationVersioned: true`, edits to name, description,
+category, tags, difficulty, and estimated time stage with the graph and promote
+together on publication. `behaviorType` remains immutable after first
+publication. If the capability is absent or false, follow the live metadata
+restrictions rather than assuming staged presentation. Use the Erstan UI for
+app-only operations such as archive/delete; do not invent MCP tools.
+
+## Guarded draft previews
+
+Inspect the live `test_agent` schema before preparing the request:
+
+- `version` is the current draft version guard. Send the revision paired with
+  that content when the schema advertises `revision`.
+- Only when the user explicitly selects Skill versions and the schema supports
+  both fields, send top-level `skillVersions: [{ skillId, version }]` together
+  with the required Agent `revision`. Never put these controls inside `input`.
+- Each selected Skill requires edit access and must be allowed by the Agent's
+  existing Skill policy. Unselected Skills and child Agents use published
+  content; do not implicitly substitute their drafts or widen policy.
+- If the requested exact preview is unsupported, report the capability gap.
+  Do not silently omit the selections, publish dependencies, or fall back to a
+  published run to make the request succeed.
+- Use a stable `idempotencyKey` for the identical preview intent when supported.
+  It deduplicates that test independently of published runs. Unknown effects
+  still require reconciliation, not a fresh-key launch.
+
+Preview is a real hosted run with costs, tool effects, and normal approval
+rules, not execution of unsaved local files. Poll the returned run handle. A
+guarded preview seals its selected graph; later edits or publication may fork
+and advance the version. Check for drift before the next write and retain the
+returned content and guard together. A successful preview neither publishes
+content nor authorizes publication.
 
 ## Graph construction
 
