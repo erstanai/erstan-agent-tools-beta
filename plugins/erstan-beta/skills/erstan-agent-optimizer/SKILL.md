@@ -14,6 +14,8 @@ saved update, live preview, or publication.
 
 Read [the Agent optimization protocol](references/optimization-protocol.md)
 before proposing a candidate or changing an Agent.
+Before an authorized update, preview, or publication, also read the shared
+[lifecycle and guarded preview rules](../erstan-agent-builder/references/lifecycle-and-graph.md).
 
 ## Workflow
 
@@ -31,6 +33,8 @@ before proposing a candidate or changing an Agent.
    payloads into the report. A different or absent version supports a drift
    finding, not a claim about the current graph.
 4. Retrieve every bound workspace Skill with `get_agent_skill` when readable.
+   Distinguish its current draft from published and run-selected Skill versions;
+   use immutable snapshot identity when present, not the latest package alone.
    Record `system:<key>` or inaccessible Skill packages as evidence gaps.
    Inspecting a Skill does not authorize changing it.
 5. Classify every finding as Agent, Skill, platform, connector/provider, or a
@@ -45,11 +49,15 @@ before proposing a candidate or changing an Agent.
    non-mutating validation. Stop at a candidate and validation report unless
    the user explicitly asked for a saved update.
 8. For an authorized update, re-read the Agent, reconcile version drift, and
-   call `update_agent` with the latest revision and a new stable idempotency
-   key. Do not test the draft or publish it under the update authorization.
+   call `update_agent` with the revision paired with the reconciled baseline
+   and a stable idempotency key for that exact intent. Retain returned content
+   and its guard together. Reconcile ambiguous outcomes before any new write.
+   Do not test the draft or publish it under the update authorization.
 9. Call `test_agent` only after explicit live-preview authorization. Real
-   integrations and side effects remain possible. For writes, independently
-   reconcile effects by stable business identity.
+   integrations and side effects remain possible. Use the selected draft's
+   guards and only explicitly authorized, supported top-level Skill version
+   selections. For writes, independently reconcile effects by stable business
+   identity.
 10. Call `publish_agent` only after explicit publication approval for the exact
     validated revision. Report the retained published version after a re-read.
 

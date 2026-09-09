@@ -26,9 +26,12 @@
 - Resolve refs through `list_agent_skills`. Inspect workspace Skill IDs with
   `get_agent_skill`; never pass a `system:<key>` ref to that tool because system
   packages are not readable through it.
-- Require workspace Skills to be published and readable. For a listed system
-  ref, record the package-content evidence limitation; treat unknown refs as
-  blocking.
+- Published Agent runs require published workspace Skills. For an explicitly
+  authorized draft preview, distinguish exact top-level Skill version selections
+  from ordinary bindings and verify that the live schema, edit permissions, and
+  Agent policy permit them. A draft binding is not permission to publish it.
+  For a listed system ref, record the package-content evidence limitation;
+  treat unknown refs as blocking.
 - Avoid duplicating large Skill bodies in node instructions.
 
 ## Tools and writes

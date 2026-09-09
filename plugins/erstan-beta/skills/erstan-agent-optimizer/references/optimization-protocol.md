@@ -14,8 +14,10 @@ usage only when present.
 - A run with a different Agent ID is comparative evidence only.
 - A run with a different version can demonstrate historical behavior and
   version drift, but cannot prove the current graph has the same defect.
-- Current Skill packages may differ from the instructions used by a historical
-  run. Record that limitation when the trace lacks exact Skill-version evidence.
+- Current Skill packages may be unpublished drafts or differ from the run's
+  immutable selected snapshots. Correlate Skill ID and exact version identity
+  when exposed; record the limitation when a legacy trace lacks that evidence.
+  Never diagnose a historical run as if it used the latest draft or publication.
 - Screenshots establish visible symptoms, not graph or write-effect truth.
 
 ## Ownership decision

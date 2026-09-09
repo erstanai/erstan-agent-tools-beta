@@ -39,6 +39,24 @@ not npm CLI commands. By default they stop at an evidence-backed local proposal
 and validation result; updates, live Agent previews, and publication each
 require separate explicit authorization.
 
+### SDK and versioned authoring
+
+`@erstan/sdk` is the separate JavaScript/TypeScript client for developers who
+want to keep Agents, complete Skill packages, and prompt files in their own
+private repositories. Its examples are optional; this plugin does not install
+the SDK or require a particular layout, test runner, or CI workflow. Follow the
+SDK's reviewed release instructions rather than assuming an npm release exists.
+
+The packaged Skills check the connected server's live authoring capabilities.
+With staged saves supported, saving preserves published content; preview and
+publication remain separate, explicitly authorized actions. Run reviews use
+the selected immutable Skill snapshots when that evidence is available. Older
+servers are not assumed to support staging or exact draft Skill previews.
+
+Hosted MCP schemas come from the connected environment. Packaged instructions
+are static: backend or SDK updates do not update them. Beta instructions must
+be synced from a reviewed production-plugin ref and released separately.
+
 ## Permission model
 
 Erstan is the source of truth for what the connection may access. Users manage

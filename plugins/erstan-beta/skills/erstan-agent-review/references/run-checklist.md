@@ -4,6 +4,10 @@
 
 - Record Agent/version, run ID, thread ID, trigger provenance, start/end time,
   status, and pending interaction.
+- Record immutable Skill version identities and explicit preview selections
+  when exposed. Compare against the packages selected by that run, not merely
+  `get_agent_skill`'s current package, which may be an unpublished draft. Missing
+  snapshot identity on legacy runs is an evidence gap, not proof of drift.
 - Page the trace until a terminal event; report if collection is truncated.
 
 ## Reconstruct chronology
